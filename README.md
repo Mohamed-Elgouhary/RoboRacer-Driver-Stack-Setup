@@ -1,6 +1,4 @@
-.. _doc_drive_workspace:
-
-3. RoboRacer Driver Stack Setup
+# 3. RoboRacer Driver Stack Setup
 =================================
 **Equipment Required:**
 	* Fully built RoboRacer  vehicle
