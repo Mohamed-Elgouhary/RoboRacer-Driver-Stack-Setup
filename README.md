@@ -67,141 +67,57 @@ If you want to add additional devices and don’t know their vendor or product I
 
 	sudo udevadm info --name=<your_device_name> --attribute-walk
 
-making sure to replace ``<your_device_name>`` with the name of your device (e.g. ttyACM0 if that’s what the OS assigned it. The Unix utility dmesg can help you find that). The topmost entry will be the entry for your device; lower entries are for the device’s parents.
+making sure to replace ``<your_device_name>`` with the name of your device (e.g., ttyACM0 if that’s what the OS assigned it. The Unix utility dmesg can help you find that). The topmost entry will be the entry for your device; lower entries are for the device’s parents.
 
-.. .. _ros_workspace:
+**2. Installing ROS 2 and its Utilities**
 
-.. 1. Setting Up the ROS Workspace
-.. ---------------------------------
-.. Connect to the **Jetson NX** either via SSH on the **Pit** laptop or a wired connection (monitor, keyboard, mouse).
+First, follow the instructions from [the official ROS 2 Foxy Installation Guide](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html) to install ROS 2 via Debian Packages.
 
-.. On the **Jetson NX**, setup your ROS workspace (for the driver nodes onboard the vehicle) by opening a terminal window and following these steps.
+Next, we'll need ``colcon`` as the main build tool for ROS 2. Install it following the [instructions here](https://docs.ros.org/en/foxy/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html).
 
-.. #. Clone the following repository into a folder on your computer.
+Lastly, we'll need ``rosdep`` as the dependency resolution tool. Install it following the [instructions here](https://docs.ros.org/en/foxy/How-To-Guides/Building-a-Custom-Debian-Package.html#install-dependencies) and initialize it following the [instructions here](https://docs.ros.org/en/foxy/How-To-Guides/Building-a-Custom-Debian-Package.html#install-dependencies).
 
-.. 	.. code-block:: bash
-
-.. 		$​ ​cd​ ~/sandbox (or whatever folder you want to work ​in​)
-.. 		$​ git ​clone​ https://github.com/f1tenth/f1tenth_system
-
-.. #. Create a workspace folder if you haven’t already, here called ``f1tenth_ws``, and copy the ``f1tenth_system`` folder into it.
-
-.. 	.. code-block:: bash
-
-.. 		$​ mkdir -p f1tenth_ws/src
-.. 		$​ cp -r f1tenth_system f1tenth_ws/src/
-
-.. #. You might need to install some additional ROS packages.
-
-.. 	For ROS Kinetic:
-
-.. 		.. code-block:: bash
-
-.. 			$​ sudo apt-get update
-.. 			$​ sudo apt-get install ros-kinetic-driver-base
-
-.. 	For ROS Melodic:
-
-.. 		.. code-block:: bash
-
-.. 			$​ sudo apt-get update
-.. 			$​ sudo apt-get install ros-melodic-driver-base
-
-.. #. Make all the Python scripts executable.
-
-.. 	.. code-block:: bash
-
-.. 		$​ ​cd​ f1tenth_ws
-.. 		$​ find . -name “*.py” -exec chmod +x {} \;
-
-.. #. Move to your workspace folder and compile the code (catkin_make does more than code compilation - see online reference).
-
-.. 	.. code-block:: bash
-
-.. 		$​ catkin_make
-
-.. #. Finally, source your working directory into your shell using
-
-.. 	.. code-block:: bash
-
-.. 		$​ source devel/setup.bash
-
-.. ..
-.. 	Workspace Content Breakdown
-.. 	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. 	Examine the contents of your workspace and you will see 3 folders. In the ROS world we call these **meta-packages** since they contain package.
-
-.. 		* algorithms
-.. 		* simulator
-.. 		* system
-
-.. 	#. Algorithms contains the brains of the car which run high level algorithms, such as wall following, pure pursuit, localization.
-.. 	#. Simulator contains racecar-simulator which is based off of MIT Racecar’s repository and includes some new worlds such as Levine 2nd floor loop. Simulator also contains f1_10_sim which contains some message types useful for passing drive parameters data from the algorithm nodes to the VESC nodes that drive the car.
-.. 	#. System contains code from MIT Racecar that the car would not be able to work without. For instance, System contains ackermann_msgs (for Ackermann steering), racecar (which contains parameters for max speed, sensor IP addresses, and teleoperation), serial (for USB serial communication with VESC), and vesc (written by MIT for VESC to work with the racecar).
-
-.. 	We will be focusing on the **System** folder in this section. :ref:`Going Forward <doc_going_forward_intro>` will utilize the firsit two folders - **Algorithms** and **Simulator**.
-
-.. _install_ros2:
-2. Installing ROS 2 and its Utilities
----------------------------------------
-First, follow the instructions from `the official ROS 2 Foxy Installation Guide <https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html>`_ to install ROS 2 via Debian Packages.
-
-Next, we'll need ``colcon`` as the main build tool for ROS 2. Install it following the `instructions here <https://docs.ros.org/en/foxy/Tutorials/Colcon-Tutorial.html?highlight=colcon#install-colcon>`_.
-
-Lastly, we'll need ``rosdep`` as the dependency resolution tool. Install it following the `instructions here <https://docs.ros.org/en/foxy/How-To-Guides/Building-a-Custom-Debian-Package.html?highlight=rosdep#install-dependencies>`_ and initialize it following the `instructions here <https://docs.ros.org/en/foxy/How-To-Guides/Building-a-Custom-Debian-Package.html?highlight=rosdep#install-dependencies>`_.
-
-.. _software_stack:
-3. Setting up the Driver Stack
-----------------------------------
+**3. Setting up the Driver Stack**
 
 First, we'll create a ROS 2 workspace for our driver stack with the following commands. We'll be using ``f1tenth_ws`` as the name of our workspace going forward in this section.
 
-.. code-block:: bash
 
 	cd $HOME
 	mkdir -p f1tenth_ws/src
 
 Then, make this into a ROS 2 workspace by running:
 
-.. code-block:: bash
 
 	cd f1tenth_ws
 	colcon build
 
 Next, we'll clone the repo into the ``src`` directory of our workspace:
 
-.. code-block:: bash
 
 	cd src
 	git clone https://github.com/f1tenth/f1tenth_system.git
 
 Then we'll update the git submodules and pull in all the necessary packages
 
-.. code-block:: bash
 
 	cd f1tenth_system
 	git submodule update --init --force --remote
 
 After git finishes cloning, we can now install all dependencies for our packages with ``rosdep``:
 
-.. code-block:: bash
-
 	cd $HOME/f1tenth_ws
 	rosdep update
 	rosdep install --from-paths src -i -y
 
-Lastly, after dependencies are installed, we can build our workspace again with the driver stack pacakges:
-
-.. code-block:: bash
+Lastly, after dependencies are installed, we can build our workspace again with the driver stack packages:
 
 	colcon build
 
-You can find more details on how the drivers are set up in the README of the `f1tenth_system repo <https://github.com/f1tenth/f1tenth_system>`_.
+You can find more details on how the drivers are set up in the README of the [f1tenth_system repo](https://github.com/Mohamed-Elgouhary/f1tenth_system.git).
 
-.. _teleop_setup:
 
-4. Launching Teleop and Testing the LiDAR
-----------------------------------------------
+**4. Launching Teleop and Testing the LiDAR**
+
 This section assumes that the lidar has already been plugged in (either to the USB hub or to the ethernet port). If you are using the Hokuyo 10LX or a lidar that is connected via the ethernet port of the Orbitty, make sure that you have completed the :ref:`Hokuyo 10LX Ethernet Connection <doc_firmware_hokuyo10>` section before preceding.
 
 Before the bringup launch, you'll have to set the correct parameters according to which LiDAR you're using in the params file ``sensors.yaml``. All parameter files are located in the following location:
