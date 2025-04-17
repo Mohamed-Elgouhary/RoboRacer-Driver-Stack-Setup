@@ -129,6 +129,8 @@ A. If you're using an Ethernet-based LiDAR, set the ``ip_address`` field to the 
 
 B. If you're using a USB-based LiDAR, comment out the ``ip_address`` field, and uncomment the line with the ``serial_port`` field. And set the value to the correct udev name from the udev rules set up.
 
+During teleop, if the joystick is not mapped correctly, you can change the mapping in ``/f1tenth_ws/src/f1tenth_system/f1tenth_stack/config/joy_teleop.yaml`` 
+
 In your running container, run the following commands to source the ROS 2 underlay and our workspace's overlay:
 
 
