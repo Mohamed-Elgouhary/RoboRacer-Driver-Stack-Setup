@@ -33,7 +33,6 @@ Fortunately, Linux has a utility named udev that allows us to assign each device
 
 First, **as root**, open ``/etc/udev/rules.d/99-hokuyo.rules`` in a text editor to create a new rules file for the Hokuyo. Copy the following rule exactly as it appears below in a single line and save it:
 
-.. code-block:: bash
 
 	KERNEL=="ttyACM[0-9]*", ACTION=="add", ATTRS{idVendor}=="15d1", MODE="0666", GROUP="dialout", SYMLINK+="sensors/hokuyo"
 
