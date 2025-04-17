@@ -153,6 +153,28 @@ Running the bringup launch will start the VESC drivers, the LiDAR drivers, the j
 
 The RViz window should show up. Then you can add a LaserScan visualization in RViz on the ``/scan`` topic.
 
+# Calibrating the Odometry
+
+Now that everything is built, configured, and installed, the odometry of the vehicle needs to be calibrated. The VESC receives input velocities in m/s and steering angles in radians. However, the motor and servo require commands in revolutions per minute (RPM) and servo positions. The conversion parameters will need to be tuned to your specific car.
+
+1. The parameters in [vesc.yaml](https://github.com/Mohamed-Elgouhary/f1tenth_system/blob/foxy-devel/f1tenth_stack/config/vesc.yaml) need to be calibrated. This YAML file is located at:
+
+   ```bash
+   $HOME/f1tenth_ws/src/f1tenth_system/f1tenth_stack/config/vesc.yaml
+   ```
+2. Modified the source code located at:
+
+   ```bash
+   $HOME/f1tenth_ws/src/f1tenth_system/vesc/vesc_ackermann/src/vesc_to_odom.cpp
+   ```
+Modify line ``100`` so it reads:
+
+   ```bash
+   double current_speed = -(-state->state.speed - speed_to_erpm_offset_) / speed_to_erpm_gain_;
+   ```
+   
+
+
 # References:
 [Roboracer Official Website](https://roboracer.ai/)
 
