@@ -152,3 +152,6 @@ Running the bringup launch will start the VESC drivers, the LiDAR drivers, the j
 
 The RViz window should show up. Then you can add a LaserScan visualization in RViz on the ``/scan`` topic.
 
+# References:
+[Roboracer Official Website](https://roboracer.ai/)
+
