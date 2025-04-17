@@ -129,7 +129,7 @@ A. If you're using an Ethernet-based LiDAR, set the ``ip_address`` field to the 
 
 B. If you're using a USB-based LiDAR, comment out the ``ip_address`` field, and uncomment the line with the ``serial_port`` field. And set the value to the correct udev name from the udev rules set up.
 
-During teleop, if the joystick is not mapped correctly, you can change the mapping in ``/f1tenth_ws/src/f1tenth_system/f1tenth_stack/config/joy_teleop.yaml`` 
+During teleop, if the joystick is not mapped correctly, you can change the mapping in ``/f1tenth_ws/src/f1tenth_system/f1tenth_stack/config/joy_teleop.yaml`` line 36 (human_control/axis_mappings/drive-steering_angle/axis) make it 3
 
 In your running container, run the following commands to source the ROS 2 underlay and our workspace's overlay:
 
@@ -157,7 +157,7 @@ The RViz window should show up. Then you can add a LaserScan visualization in RV
 
 Now that everything is built, configured, and installed, the odometry of the vehicle needs to be calibrated. The VESC receives input velocities in m/s and steering angles in radians. However, the motor and servo require commands in revolutions per minute (RPM) and servo positions. The conversion parameters will need to be tuned to your specific car.
 
-1. The parameters in [vesc.yaml](https://github.com/Mohamed-Elgouhary/f1tenth_system/blob/foxy-devel/f1tenth_stack/config/vesc.yaml) need to be calibrated. This YAML file is located at:
+1. The parameters in [vesc.yaml](https://github.com/Mohamed-Elgouhary/f1tenth_system/blob/foxy-devel/f1tenth_stack/config/vesc.yaml) need to be calibrated. You can change the value in line 10 (/ros__parameters/steering_angle_to_servo_offset) to 0.4777. This YAML file is located at:
 
    ```bash
    $HOME/f1tenth_ws/src/f1tenth_system/f1tenth_stack/config/vesc.yaml
