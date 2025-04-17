@@ -1,34 +1,32 @@
 # 3. RoboRacer Driver Stack Setup
-=================================
+
 **Equipment Required:**
-	* Fully built RoboRacer  vehicle
-	* Pit/Host computer OR
-	* External monitor/display, HDMI cable, keyboard, mouse
+- Fully built RoboRacer  vehicle.
+- Pit/Host computer OR.
+- External monitor/display, HDMI cable, keyboard, mouse.
 
-**Approximate Time Investment:** 1.5 hour
+**Approximate Time Investment:** 1.5 hours
 
-.. warning:: **Before you proceed**, this specific section goes over how to set up the driver stack **natively** if you have Jetson Xaviers and above, **and** JetPack versions after 5.0 and wish to use ROS 2. For JetPack versions below 5.0 and Jetsons before Xavier, go to :ref:`Driver Stack Setup with Docker Containers <doc_drive_workspace_docker>` and follow the instructions there.
+**warning**
 
-Overview
-----------
-Since the release of `JetPack 5.0 Developer Preview <https://developer.nvidia.com/jetpack-sdk-50dp>`_ the Jetson can now run on Ubuntu 20.04, and we can install ROS 2 natively and conveniently.
-We use ROS 2 Foxy for communication and run the car. You can find a tutorial on ROS 2 `here <https://docs.ros.org/en/foxy/Tutorials.html>`_.
+**Before you proceed**, this specific section goes over how to set up the driver stack **natively** if you have Jetson Xaviers and above, **and** JetPack versions after 5.0 and wish to use ROS 2.
+
+**Overview**
+
+Since the release of [JetPack 5.0 Developer Preview](https://developer.nvidia.com/embedded/jetpack-sdk-501dp), the Jetson can now run on Ubuntu 20.04, and we can install ROS 2 natively and conveniently.
+We use ROS 2 Foxy for communication and run the car. You can find a tutorial on ROS 2 [here](https://docs.ros.org/en/foxy/Tutorials.html).
 
 In the following section, we'll go over how to set up the **drivers** for sensors and the motor control:
 
-#. Setting up :ref:`udev rules <udev_rules>` for our sensors.
-#. Installing :ref:`ROS 2 and its utilities <install_ros2>`.
-#. Setting up the :ref:`driver stack <software_stack>`.
-#. Launch :ref:`teleoperation and the LiDAR <teleop_setup>`.
+1. Setting up udev rules for our sensors.
+2. Installing ROS 2 and its utilities.
+3. Setting up the driver stack.
+4. Launch teleoperation and the LiDAR.
 
-.. We'll need to set up the :ref:`ROS workspace <ros_workspace>`, set up some :ref:`udev rules <udev_rules>`, and :ref:`test the lidar connection <lidar_setup>`.
+Everything in this section is done on the **Jetson NX**, so you will need to connect to it via SSH from the Pit laptop or plug in the monitor, keyboard, and mouse.
 
-Everything in this section is done on the **Jetson NX** so you will need to connect to it via SSH from the Pit laptop or plug in the monitor, keyboard, and mouse.
+**1. udev Rules Setup**
 
-.. _udev_rules:
-
-1. udev Rules Setup
-----------------------
 When you connect the VESC and a USB lidar to the Jetson, the operating system will assign them device names of the form ``/dev/ttyACMx``, where ``x`` is a number that depends on the order in which they were plugged in. For example, if you plug in the lidar before you plug in the VESC, the lidar will be assigned the name ``/dev/ttyACM0``, and the VESC will be assigned ``/dev/ttyACM1``. This is a problem, as the car’s configuration needs to know which device names the lidar and VESC are assigned, and these can vary every time we reboot the Jetson, depending on the order in which the devices are initialized.
 
 Fortunately, Linux has a utility named udev that allows us to assign each device a “virtual” name based on its vendor and product IDs. For example, if we plug a USB device in and its vendor ID matches the ID for Hokuyo laser scanners (15d1), udev could assign the device the name ``/dev/sensors/hokuyo`` instead of the more generic ``/dev/ttyACMx``. This allows our configuration scripts to refer to things like ``/dev/sensors/hokuyo`` and ``/dev/sensors/vesc``, which do not depend on the order in which the devices were initialized. We will use udev to assign persistent device names to the lidar, VESC, and joypad by creating three configuration files (“rules”) in the directory ``/etc/udev/rules.d``.
