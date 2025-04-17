@@ -38,38 +38,32 @@ First, **as root**, open ``/etc/udev/rules.d/99-hokuyo.rules`` in a text editor 
 
 Next, open ``/etc/udev/rules.d/99-vesc.rules`` and copy in the following rule for the VESC:
 
-.. code-block:: bash
 
 	KERNEL=="ttyACM[0-9]*", ACTION=="add", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", MODE="0666", GROUP="dialout", SYMLINK+="sensors/vesc"
 
 Then open ``/etc/udev/rules.d/99-joypad-f710.rules`` and add this rule for the joypad:
 
-.. code-block:: bash
 
 	KERNEL=="js[0-9]*", ACTION=="add", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c219", SYMLINK+="input/joypad-f710"
 
 Finally, trigger (activate) the rules by running
 
-.. code-block:: bash
 
 	sudo udevadm control --reload-rules
 	sudo udevadm trigger
 
 Reboot your system, and you should find three new devices by running
 
-.. code-block:: bash
 
 	ls /dev/sensors
 
 and:
 
-.. code-block:: bash
 
 	ls /dev/input
 
 If you want to add additional devices and don’t know their vendor or product IDs, you can use the command
 
-.. code-block:: bash
 
 	sudo udevadm info --name=<your_device_name> --attribute-walk
 
