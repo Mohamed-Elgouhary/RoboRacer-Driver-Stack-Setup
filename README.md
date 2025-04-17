@@ -143,7 +143,6 @@ Then, you can launch the bring-up with:
 
 Running the bringup launch will start the VESC drivers, the LiDAR drivers, the joystick drivers, and all necessary packages for running the car. To see the LaserScan messages, in a new terminal window, run
 
-.. code-block:: bash
 
 	source /opt/ros/foxy/setup.bash
 	cd $HOME/f1tenth_ws
